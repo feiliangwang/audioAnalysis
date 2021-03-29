@@ -23,9 +23,9 @@ type AduioInfoAddRequest struct {
 	//本位币
 	ToTelephoneNumber string `json:"toTelephoneNumber"`
 	//发生时间
-	HappenTimestamp string `json:"happenTimestamp"`
+	HappenTimestamp int64 `json:"happenTimestamp"`
 	//时长
-	TotalDuration string `json:"totalDuration"`
+	TotalDuration int64 `json:"totalDuration"`
 	//文件名
 	FileName string `json:"fileName"`
 	//文件流
@@ -44,8 +44,8 @@ type AduioInfoUpdateRequest struct {
 	HappenTimestamp *int64 `json:"happenTimestamp"`
 	//时长
 	TotalDuration *int64 `json:"totalDuration"`
-	//文件名
-	FileName *string `json:"fileName"`
+	////文件名
+	//FileName *string `json:"fileName"`
 }
 
 //音频信息列表查询请求

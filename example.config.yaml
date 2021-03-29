@@ -1,0 +1,10 @@
+http:
+  listen: 80
+  fileDir: ./file/
+mysql:
+  user: root
+  password: 123qwe!@#
+  host: 127.0.0.1
+  port: 3306
+  name: audio
+  charset: utf8

@@ -2,12 +2,19 @@ package service
 
 import (
 	"context"
+	"crypto/md5"
 	"database/sql"
+	"encoding/hex"
+	"fmt"
 	"github.com/feiliangwang/audioAnalysis/api"
 	"github.com/feiliangwang/audioAnalysis/communicate"
 	"github.com/feiliangwang/audioAnalysis/dao"
 	"github.com/feiliangwang/audioAnalysis/orm"
+	"io"
 	"log"
+	"os"
+	"path"
+	"time"
 )
 
 /**
@@ -27,6 +34,8 @@ func NewAudioServer(db *sql.DB, dir string) AudioService {
 	return &AudioServerImplement{db: db, dir: dir}
 }
 
+const Audio_Table_Name = "audio_file"
+
 /**
  * @Author feiliang.wang
  * @Description 添加音频文件信息
@@ -38,8 +47,37 @@ func NewAudioServer(db *sql.DB, dir string) AudioService {
  * @return
  **/
 func (s *AudioServerImplement) Add(ctx context.Context, logger *log.Logger, request api.AduioInfoAddRequest) (id int32, err error) {
-	//todo 计算一些数据 然后添加到数据库 保存文件
-	return 0, nil
+	relativePath := path.Join("/", request.FromTelephoneNumber, request.ToTelephoneNumber, time.Unix(request.HappenTimestamp, 0).Format("20060102"), request.FileName)
+	dir := path.Join(s.dir, request.FromTelephoneNumber, request.ToTelephoneNumber, time.Unix(request.HappenTimestamp, 0).Format("20060102"))
+	file := path.Join(dir, request.FileName)
+	hash := md5.New()
+	if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+		return 0, err
+	} else if f, err := os.Create(file); err != nil {
+		return 0, err
+	} else {
+		defer f.Close()
+		if size, err := io.Copy(f, request.Stream); err != nil {
+			return 0, err
+		} else if _, err := io.Copy(hash, f); err != nil {
+			return 0, err
+		} else {
+			return orm.InsertInfo(s.db, Audio_Table_Name, &dao.AduioDao{
+				Id:                  0,
+				TelephoneKind:       request.TelephoneKind,
+				FromTelephoneNumber: request.FromTelephoneNumber,
+				ToTelephoneNumber:   request.ToTelephoneNumber,
+				HappenTimestamp:     request.HappenTimestamp,
+				TotalDuration:       request.TotalDuration,
+				FileName:            request.FileName,
+				Size:                size,
+				FileType:            path.Ext(file),
+				Md5:                 hex.EncodeToString(hash.Sum(nil)),
+				FilePath:            relativePath,
+			})
+		}
+	}
+
 }
 
 /**
@@ -52,8 +90,7 @@ func (s *AudioServerImplement) Add(ctx context.Context, logger *log.Logger, requ
  * @return
  **/
 func (s *AudioServerImplement) Delete(ctx context.Context, logger *log.Logger, id int32) (ok bool, err error) {
-	//todo 删除文件
-	return false, nil
+	return orm.DeleteInfo(s.db, Audio_Table_Name, id)
 }
 
 /**
@@ -66,8 +103,34 @@ func (s *AudioServerImplement) Delete(ctx context.Context, logger *log.Logger, i
  * @return
  **/
 func (s *AudioServerImplement) Update(ctx context.Context, logger *log.Logger, request api.AduioInfoUpdateRequest) (ok bool, err error) {
-	//todo 更新信息
-	return false, nil
+	m := make(map[string]interface{})
+	if request.TelephoneKind != nil {
+		m["TelephoneKind"] = *request.TelephoneKind
+	}
+	if request.FromTelephoneNumber != nil {
+		m["FromTelephoneNumber"] = *request.FromTelephoneNumber
+	}
+	if request.ToTelephoneNumber != nil {
+		m["ToTelephoneNumber"] = *request.ToTelephoneNumber
+	}
+	if request.HappenTimestamp != nil {
+		m["HappenTimestamp"] = *request.HappenTimestamp
+	}
+	if request.TotalDuration != nil {
+		m["TotalDuration"] = *request.TotalDuration
+	}
+	if len(m) == 0 {
+		return false, fmt.Errorf("no data to update.")
+	} else {
+
+		return orm.UpdateInfo(s.db, Audio_Table_Name, request.Id, map[string]interface{}{
+			"TelephoneKind":       request.TelephoneKind,
+			"FromTelephoneNumber": request.FromTelephoneNumber,
+			"ToTelephoneNumber":   request.ToTelephoneNumber,
+			"HappenTimestamp":     request.HappenTimestamp,
+			"TotalDuration":       request.TotalDuration,
+		})
+	}
 }
 
 /**
@@ -80,8 +143,8 @@ func (s *AudioServerImplement) Update(ctx context.Context, logger *log.Logger, r
  * @return
  **/
 func (s *AudioServerImplement) Detail(ctx context.Context, logger *log.Logger, id int32) (data dao.AduioDao, err error) {
-	//todo 数据库中查询文件
-	return dao.AduioDao{}, nil
+	err = orm.GetInfo(s.db, Audio_Table_Name, id, &data)
+	return
 }
 
 /**
@@ -94,6 +157,15 @@ func (s *AudioServerImplement) Detail(ctx context.Context, logger *log.Logger, i
  * @return filters 过滤参数
  **/
 func (s *AudioServerImplement) List(ctx context.Context, logger *log.Logger, page communicate.PageRequest, filters orm.SqlFilterMap) (list []dao.AduioDao, pageResp communicate.PageResponseDao, err error) {
-	//todo 查询文件列表
-	return nil, communicate.PageResponseDao{}, nil
+	var count int
+	count, err = orm.GetCount(s.db, Audio_Table_Name, filters)
+	if err != nil {
+		return
+	}
+	maxPageNum := page.Verification(count)
+	pageResp.Page = page.PageNumber
+	pageResp.TotalPage = maxPageNum
+	pageResp.TotalSize = count
+	pageResp.Size, err = orm.ListInfo(s.db, logger, Audio_Table_Name, int(page.SortAsc), page.SortField, page.PageNumber, page.PageSize, filters, list)
+	return
 }

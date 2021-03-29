@@ -13,9 +13,9 @@ type AduioDao struct {
 	Id int64 `json:"id"`
 	//手机型号
 	TelephoneKind string `json:"telephoneKind"`
-	//账户类型
+	//拨打手机号
 	FromTelephoneNumber string `json:"fromTelephoneNumber"`
-	//本位币
+	//接收手机号
 	ToTelephoneNumber string `json:"toTelephoneNumber"`
 	//发生时间
 	HappenTimestamp int64 `json:"happenTimestamp"`

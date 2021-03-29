@@ -11,5 +11,4 @@ package config
 type Config struct {
 	Mysql MysqlConfig `yaml:"mysql"`
 	Http  HttpConfig  `yaml:"http"`
-	Trace TraceConf   `yaml:"trace"`
 }
