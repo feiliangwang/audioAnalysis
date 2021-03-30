@@ -42,17 +42,13 @@ Usage of ./audio:
 
 本项目已对接口做了基本的测试。
 
-测试用例详见 
-
-[audio.postman_collection.json]: audio.postman_collection.json
+测试用例详见 [audio.postman_collection.json](audio.postman_collection.json)
 
 
 
 ## API文档
 
-详见
-
-[api.md]: ami.md
+详见[api.md](api.md)
 
 
 
