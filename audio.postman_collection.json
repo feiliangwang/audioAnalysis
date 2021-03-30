@@ -1,0 +1,140 @@
+{
+	"info": {
+		"_postman_id": "db4b467e-cbde-485b-8404-3a8ea6c5948d",
+		"name": "audio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "\b新增",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "TelephoneKind",
+							"value": "vivo",
+							"type": "text"
+						},
+						{
+							"key": "FromTelephoneNumber",
+							"value": "12345678901",
+							"type": "text"
+						},
+						{
+							"key": "ToTelephoneNumber",
+							"value": "23456789012",
+							"type": "text"
+						},
+						{
+							"key": "HappenTimestamp",
+							"value": "1617029034",
+							"type": "text"
+						},
+						{
+							"key": "TotalDuration",
+							"value": "300",
+							"type": "text"
+						},
+						{
+							"key": "File",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": "127.0.0.1/api/audio/add"
+			},
+			"response": []
+		},
+		{
+			"name": "修改",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":2,\n\t\"telephoneKind\":\"iphone\",\n\t\"fromTelephoneNumber\":\"abc\",\n\t\"toTelephoneNumber\":\"efg\",\n\t\"happenTimestamp\":123,\n\t\"totalDuration\":456\n}"
+				},
+				"url": "127.0.0.1/api/audio/update"
+			},
+			"response": []
+		},
+		{
+			"name": "删除",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":1\n}"
+				},
+				"url": "127.0.0.1/api/audio/delete"
+			},
+			"response": []
+		},
+		{
+			"name": "查询",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\":2\n}"
+				},
+				"url": "127.0.0.1/api/audio/detail"
+			},
+			"response": []
+		},
+		{
+			"name": "查询列表",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"sortAsc\":1,\n\t\"sortField\":\"fromTelephoneNumber\",\n\t\"pageNumber\":1,\n\t\"pageSize\":50,\n\t\"telephoneKind\":\"iphone\",\n\t\"fromTelephoneNumber\":\"a%\",\n\t\"toTelephoneNumber\":\"%g\",\n\t\"happenTimestamp\":{\"min\":100,\"max\":200},\n\t\"totalDuration\":{\"min\":100,\"max\":500},\n\t\"fileName\":\"%main%\",\n\t\"size\":{\"max\":23096841},\n\t\"fileType\":\".gz\",\n\t\"md5\":\"%99%\",\n\t\"filePath\":\"%last%\"\n}"
+				},
+				"url": "127.0.0.1/api/audio/list"
+			},
+			"response": []
+		}
+	]
+}

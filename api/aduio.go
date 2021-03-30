@@ -53,9 +53,9 @@ type AduioInfoListRequest struct {
 	communicate.PageRequest
 	//手机型号
 	TelephoneKind *orm.StringFilter `json:"telephoneKind"`
-	//账户类型
+	//拨打手机
 	FromTelephoneNumber *orm.StringFilter `json:"fromTelephoneNumber"`
-	//本位币
+	//接听手机
 	ToTelephoneNumber *orm.StringFilter `json:"toTelephoneNumber"`
 	//发生时间
 	HappenTimestamp *orm.Int64Filter `json:"happenTimestamp"`

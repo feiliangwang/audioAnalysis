@@ -166,6 +166,6 @@ func (s *AudioServerImplement) List(ctx context.Context, logger *log.Logger, pag
 	pageResp.Page = page.PageNumber
 	pageResp.TotalPage = maxPageNum
 	pageResp.TotalSize = count
-	pageResp.Size, err = orm.ListInfo(s.db, logger, Audio_Table_Name, int(page.SortAsc), page.SortField, page.PageNumber, page.PageSize, filters, list)
+	pageResp.Size, err = orm.ListInfo(s.db, logger, Audio_Table_Name, int(page.SortAsc), page.SortField, page.PageNumber, page.PageSize, filters, &list)
 	return
 }
